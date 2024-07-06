@@ -18,8 +18,7 @@ then
 fi
 
 # Install lazydocker
-curl -s https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
-
+export DIR=/usr/bin/ && curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | sudo bash
 # Clean up unused packages
 sudo apt autoremove -y
 
