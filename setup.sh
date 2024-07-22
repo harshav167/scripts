@@ -1,9 +1,14 @@
+#!/bin/bash
+
 # Install necessary packages
 sudo apt install neovim tmux btop nvtop ubuntu-drivers-common ca-certificates curl -y
 
 # Check if Docker is installed
 if ! command -v docker &> /dev/null
 then
+    # Remove any existing Docker installations
+    sudo apt-get remove docker docker-engine docker.io containerd runc -y
+    
     # Set up Docker repository and install Docker
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -14,12 +19,17 @@ then
 
     sudo apt-get update
     sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-    sudo usermod -aG docker $USER
+    
+    # Add Docker group to all users
+    for user in $(cut -d: -f1 /etc/passwd); do
+        sudo usermod -aG docker $user
+    done
 fi
 
 # Install lazydocker
 curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | sudo DIR="/usr/local/bin" bash
-sudo sh -c 'echo "alias lzd='lazydocker'" >> /etc/bash.bashrc'
+sudo sh -c 'echo "alias lzd=lazydocker" >> /etc/bash.bashrc'
+
 # Clean up unused packages
 sudo apt autoremove -y
 
