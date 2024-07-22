@@ -53,10 +53,16 @@ if lspci | grep -i nvidia; then
     # Create and schedule post-reboot script
     cat << 'EOF' > /tmp/post_reboot_script.sh
 #!/bin/bash
-if ! dpkg -l | grep -q build-essential && ! dpkg -l | grep -q "linux-headers-$(uname -r)"; then
-    sudo apt-get install build-essential linux-headers-$(uname -r) -y
-    sudo reboot
+# Remove existing packages if they exist
+if dpkg -l | grep -q build-essential; then
+    sudo apt-get remove --purge build-essential -y
 fi
+if dpkg -l | grep -q "linux-headers-$(uname -r)"; then
+    sudo apt-get remove --purge "linux-headers-$(uname -r)" -y
+fi
+# Install packages after removal
+sudo apt-get install build-essential linux-headers-$(uname -r) -y
+sudo reboot
 EOF
     chmod +x /tmp/post_reboot_script.sh
     (crontab -l 2>/dev/null; echo "@reboot /tmp/post_reboot_script.sh") | crontab -
