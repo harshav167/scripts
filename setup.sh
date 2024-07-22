@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Install necessary packages
+sudo apt update
 sudo apt install neovim tmux btop nvtop ubuntu-drivers-common ca-certificates curl -y
 
 # Check if Docker is installed
